@@ -10,7 +10,7 @@ const page = () => {
   const [data, setData] = useState({
     title: "",
     description: "",
-    category: "startup",
+    category: "Startup",
     author: "Wasif Ansari",
   });
 
@@ -97,7 +97,7 @@ const page = () => {
           className="text-white bg-black w-1/3 p-1.5 border border-red-400 mt-4"
           name="category"
         >
-          <option value="startup">Startup</option>
+          <option value="Startup">Startup</option>
           <option value="Technology">Technology</option>
           <option value="Lifestyle">Lifestyle</option>
         </select>

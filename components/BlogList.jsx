@@ -44,9 +44,9 @@ const   BlogList = () => {
           Technology
         </button>
         <button
-          onClick={() => setMenu("Startup")}
+          onClick={() => setMenu("startup")}
           className={
-            menu === "Startup"
+            menu === "startup"
               ? "border border-red-400 bg-white text-black font-bold py-1 px-4 rounded-sm"
               : "border border-red-400 px-5 cursor-pointer"
           }
