@@ -2,14 +2,15 @@
 
 import { connectDB } from "@/lib/config/db";
 import BlogModel from "@/lib/models/BlogModel";
-import axios from "axios";
-import { response } from "express";
+// import axios from "axios";
+// import { response } from "express";
+import cloudinary from "@/lib/config/cloudinary";
 
 
 // will use blogmodel and db to store data in database  
 
 const { NextResponse } = require("next/server")
-import { writeFile } from "fs/promises";
+// import { writeFile } from "fs/promises";
 
 const LoadDB = async () =>{
     await connectDB()
@@ -48,9 +49,19 @@ export async function POST(request) {
     const image = formData.get("image");
     const imageByteData = await image.arrayBuffer();
     const buffer = Buffer.from(imageByteData);
-    const path = `./public/${timestamp}_${image.name}`;
-    await writeFile(path, buffer);
-    const imgUrl = `/${timestamp}_${image.name}`;
+    //cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream({ folder: "blogs" }, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      })
+      .end(buffer);
+  });
+
+    // const path = `./public/${timestamp}_${image.name}`;
+    // await writeFile(path, buffer);
+    // const imgUrl = `/${timestamp}_${image.name}`;
 
     const blogData = {
         title: `${formData.get('title')}`,
@@ -58,7 +69,8 @@ export async function POST(request) {
         category: `${formData.get('category')}`,
         author: `${formData.get('author')}`,
         authorImg: `${formData.get('authorImg')}`,
-        image: `${imgUrl}`,
+        //saving cloudinary image url
+        image: `${uploadResult.secure_url}`,
 
     }
 
