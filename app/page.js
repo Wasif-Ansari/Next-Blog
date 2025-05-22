@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import BlogList from "../components/BlogList";
 
 export default function Home() {
@@ -5,6 +6,7 @@ export default function Home() {
     <>
     <div>
       <BlogList/>
+      <Footer/>
     </div>
     </>
   );

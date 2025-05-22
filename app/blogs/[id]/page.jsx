@@ -62,6 +62,7 @@ const page = ({ params }) => {
           </div>
         </div>
       </div>
+      
     ) : null
   )
 }
