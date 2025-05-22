@@ -44,7 +44,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="mt-10 border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-        <p>© {new Date().getFullYear()} YourBrand. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} W-Blogs. All rights reserved.</p>
         <div className="flex gap-4 mt-4 md:mt-0">
           <a href="#" className="hover:text-fuchsia-500 transition"><FaInstagram size={18} /></a>
           <a href="#" className="hover:text-fuchsia-500 transition"><FaTwitter size={18} /></a>
