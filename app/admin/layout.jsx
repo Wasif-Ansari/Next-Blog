@@ -5,9 +5,11 @@ import "react-toastify/dist/ReactToastify.css";
 export default function layout({children}){
     return(
         <>
-        <div className="ml-64 w-full p-6 flex">
+        <div className="flex">
             <ToastContainer theme="dark"/>
             <Sidebar/>
+            {/* Adjust main content to take remaining width and apply left margin */}
+            <main className="flex-1 ml-64"/>
         </div>
         {children}
         </>

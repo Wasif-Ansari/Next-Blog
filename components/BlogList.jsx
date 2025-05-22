@@ -12,7 +12,6 @@ const   BlogList = () => {
 
   const fetchBlogsfromAPI = async ()=>{
     const response = await axios.get("/api/blog");
-    console.log("response: ", response.data.blogs);
     setBlogs(response.data.blogs)
   }
 
@@ -22,23 +21,23 @@ const   BlogList = () => {
 
   return (
     <div>
-      <div className="flex flex-row gap-5 p-5">
+      <div className="flex flex-wrap justify-center gap-5 p-5">
         <button
           onClick={() => setMenu("All")}
           className={
             menu === "All"
-              ? "border border-red-400 bg-white text-black font-bold py-1 px-4 rounded-sm"
-              : "border border-red-400 px-5 cursor-pointer"
+              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300"
+              : "text-gray-400 hover:text-white transition-colors duration-300"
           }
         >
           All
         </button>
         <button
-          onClick={() => setMenu("Technology")}
+          onClick={() => setMenu("Technology")} // Changed case to match filtering
           className={
-            menu === "Technology"
-              ? " border border-red-400 bg-white text-black font-bold py-1 px-4 rounded-sm"
-              : "border border-red-400 px-5 cursor-pointer"
+            menu === "Technology" // Consistent class for selected state
+              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300"
+              : "text-gray-400 hover:text-white transition-colors duration-300"
           }
         >
           Technology
@@ -47,8 +46,8 @@ const   BlogList = () => {
           onClick={() => setMenu("startup")}
           className={
             menu === "startup"
-              ? "border border-red-400 bg-white text-black font-bold py-1 px-4 rounded-sm"
-              : "border border-red-400 px-5 cursor-pointer"
+              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300"
+              : "text-gray-400 hover:text-white transition-colors duration-300"
           }
         >
           Startup
@@ -57,14 +56,13 @@ const   BlogList = () => {
           onClick={() => setMenu("Lifestyle")}
           className={
             menu === "Lifestyle"
-              ? "border border-red-400 bg-white text-black font-bold py-1 px-4 rounded-sm"
-              : "border border-red-400 px-5 cursor-pointer"
+ ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300"
+              : "text-gray-400 hover:text-white transition-colors duration-300"
           }
         >
           Lifestyle
         </button>
       </div>
-
       <div className="flex flex-wrap justify-around gap-1 gap-y-10">
         {blogs.filter((item)=>menu==="All"? true:item.category===menu).map((item, index) => {
           return (
