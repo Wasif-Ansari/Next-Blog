@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 const BlogDetailLoader = dynamic(() => import('@/components/BlogDetailLoader'), { ssr: false });
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 
 const page = ({ params }) => {
   const [data, setData] = useState(null);
@@ -18,6 +19,10 @@ const page = ({ params }) => {
           id: params.id
         }
       });
+      // Normalize Windows CRLF to LF so markdown + breaks process correctly
+      if (response.data && typeof response.data.description === 'string') {
+        response.data.description = response.data.description.replace(/\r\n/g, '\n');
+      }
       setData(response.data);
     } catch (err) {
       console.error('Failed to fetch blog', err);
@@ -71,8 +76,26 @@ const page = ({ params }) => {
               </div>
             </div>
           )}
-          <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-700 prose-code:text-pink-400 prose-blockquote:border-l-purple-500">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-700 prose-code:text-pink-400 prose-blockquote:border-l-purple-500 whitespace-pre-line">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkBreaks]}
+              components={{
+                strong: ({node, ...props}) => <strong className="font-semibold text-white" {...props} />,
+                em: ({node, ...props}) => <em className="text-fuchsia-300" {...props} />,
+                p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                h1: ({node, ...props}) => <h1 className="mt-8 mb-4 text-3xl font-bold text-white" {...props} />,
+                h2: ({node, ...props}) => <h2 className="mt-8 mb-4 text-2xl font-semibold text-white" {...props} />,
+                h3: ({node, ...props}) => <h3 className="mt-6 mb-3 text-xl font-semibold text-white" {...props} />,
+                ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4 space-y-1" {...props} />,
+                ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4 space-y-1" {...props} />,
+                blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-fuchsia-500/60 pl-4 italic text-fuchsia-200 mb-6" {...props} />,
+                code: ({inline, className, children, ...props}) => (
+                  <code className={`${inline ? 'px-1 py-0.5 rounded bg-gray-800 border border-gray-700 text-pink-300' : 'block p-4 rounded bg-gray-900 border border-gray-700 text-pink-300 overflow-x-auto'} ${className||''}`} {...props}>
+                    {children}
+                  </code>
+                )
+              }}
+            >
               {data.description}
             </ReactMarkdown>
           </div>
