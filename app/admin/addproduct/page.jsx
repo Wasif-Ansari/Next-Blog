@@ -12,7 +12,9 @@ const page = () => {
     description: "",
     category: "startup",
     author: "Wasif Ansari",
+    imageUrl: ""
   });
+  const [useUrl, setUseUrl] = useState(false);
 
   const onchangeHandler = (event) => {
     const name = event.target.name;
@@ -28,7 +30,11 @@ const page = () => {
     formData.append("description", data.description);
     formData.append("category", data.category);
     formData.append("author", data.author);
-    formData.append("image", image);
+    if (useUrl && data.imageUrl.trim()) {
+      formData.append("imageUrl", data.imageUrl.trim());
+    } else {
+      formData.append("image", image);
+    }
 
     try {
       const response = await axios.post("/api/blog", formData);
@@ -40,7 +46,9 @@ const page = () => {
           description: "",
           category: "Technology",
           author: "Wasif Ansari",
+          imageUrl: ""
         });
+        setUseUrl(false);
       } else {
         toast.error("Error!");
       }
@@ -57,23 +65,44 @@ const page = () => {
           
           {/* Upload Thumbnail */}
           <div className="col-span-1 md:col-span-2">
-            <label htmlFor="image" className="text-xl font-semibold text-gray-200 block mb-2">Upload Thumbnail</label>
-            <label htmlFor="image" className="cursor-pointer block w-fit">
-              <Image
-                src={image ? URL.createObjectURL(image) : assets.upload_area}
-                width={140}
-                height={70}
-                alt="Upload Area"
-                className="rounded-md border border-gray-600 hover:border-fuchsia-500 transition-colors duration-300"
-              />
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xl font-semibold text-gray-200">Thumbnail Image</label>
+              <button
+                type="button"
+                onClick={() => { setUseUrl(prev=>!prev); setImage(null); }}
+                className="text-xs px-3 py-1 rounded-full border border-fuchsia-500 text-fuchsia-300 hover:bg-fuchsia-600 hover:text-white transition"
+              >{useUrl ? 'Use File Upload' : 'Use Image URL'}</button>
+            </div>
+            {!useUrl && (
+              <label htmlFor="image" className="cursor-pointer inline-block">
+                <Image
+                  src={image ? URL.createObjectURL(image) : assets.upload_area}
+                  width={140}
+                  height={70}
+                  alt="Upload Area"
+                  className="rounded-md border border-gray-600 hover:border-fuchsia-500 transition-colors duration-300"
+                />
+                <input
+                  onChange={(e) => setImage(e.target.files[0])}
+                  type="file"
+                  id="image"
+                  hidden
+                  required={!useUrl}
+                />
+              </label>
+            )}
+            {useUrl && (
               <input
-                onChange={(e) => setImage(e.target.files[0])}
-                type="file"
-                id="image"
-                hidden
-                required
+                type="url"
+                name="imageUrl"
+                value={data.imageUrl}
+                onChange={onchangeHandler}
+                placeholder="https://example.com/image.jpg"
+                className="w-full p-3 rounded-md bg-gray-800 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 transition-all duration-300"
+                required={useUrl}
               />
-            </label>
+            )}
+            <p className="text-xs text-gray-400 mt-2">{useUrl ? 'Provide a direct image URL (will be uploaded via Cloudinary).' : 'Upload an image file from your device.'}</p>
           </div>
 
           {/* Blog Title */}
@@ -96,9 +125,9 @@ const page = () => {
               name="description"
               onChange={onchangeHandler}
               value={data.description}
-              className="w-full p-3 rounded-md bg-gray-800 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 transition-all duration-300"
-              placeholder="Enter Description"
-              rows={6}
+              className="w-full p-3 rounded-md bg-gray-800 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 transition-all duration-300 font-mono text-sm"
+              placeholder={"Write markdown: headings (#), bold (**text**), lists (- item), code (```js) etc."}
+              rows={10}
             />
           </div>
 

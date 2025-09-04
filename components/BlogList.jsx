@@ -2,10 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import BlogItem from "./BlogItem";
-import { blog_data } from "../Assets/assets";
 import axios from "axios";
 import Link from "next/link";
-import Image from "next/image";
 
 const   BlogList = () => {
   const [menu, setMenu] = useState("All");
@@ -110,19 +108,24 @@ const   BlogList = () => {
           Lifestyle
         </button>
       </div>
-      <div className="flex flex-wrap justify-around gap-1 gap-y-10">
-        {blogs.filter((item)=>menu==="All"? true:item.category===menu).map((item, index) => {
-          return (
-            <BlogItem
-              id={item._id}
-              key={index}
-              image={item.image}
-              description={item.description}
-              title={item.title}
-              category={item.category}
-            />
-          );
-        })}
+      <div className="px-5 pb-20">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr max-w-7xl mx-auto">
+          {blogs
+            .filter(item => menu === "All" ? true : item.category === menu)
+            .map((item) => (
+              <BlogItem
+                id={item._id}
+                key={item._id}
+                image={item.image}
+                description={item.description}
+                title={item.title}
+                category={item.category}
+              />
+            ))}
+        </div>
+        {blogs.filter(item => menu === "All" ? true : item.category === menu).length === 0 && (
+          <div className="text-center text-gray-400 mt-16">No blogs found.</div>
+        )}
       </div>
     </div>
   );

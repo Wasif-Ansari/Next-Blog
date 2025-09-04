@@ -2,17 +2,29 @@
 import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import dynamic from 'next/dynamic';
+const BlogDetailLoader = dynamic(() => import('@/components/BlogDetailLoader'), { ssr: false });
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const page = ({ params }) => {
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchBlogdata = async () => {
-    const response = await axios.get("/api/blog", {
-      params:{
-        id: params.id
-      }
-    });
-    setData(response.data);
+    try {
+      const response = await axios.get("/api/blog", {
+        params:{
+          id: params.id
+        }
+      });
+      setData(response.data);
+    } catch (err) {
+      console.error('Failed to fetch blog', err);
+    } finally {
+      // Small artificial delay for smoother skeleton perception
+      setTimeout(()=> setLoading(false), 400);
+    }
   };
 
   useEffect(() => {
@@ -25,6 +37,10 @@ const page = ({ params }) => {
     fetchBlogdata();
   }, []);
 
+
+  if (loading) {
+    return <BlogDetailLoader />;
+  }
 
   return (
     data ? (
@@ -41,24 +57,24 @@ const page = ({ params }) => {
             </div>
           </div>
 
-          {data.image&&(
-            <div className="mb-10 w-full max-w-sm mx-auto rounded-2xl overflow-hidden border border-gray-700 shadow-2xl transform transition-transform duration-500 ease-in-out hover:scale-105 relative">
-              <Image
-                src={data.image}
-                width={400}
-                height={250}
-                alt={data.title}
-                className="w-full h-auto object-cover"
-              />
+          {data.image && (
+            <div className="mb-10 w-full max-w-3xl mx-auto">
+              <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden border border-gray-700 shadow-2xl transition-transform duration-500 ease-in-out hover:scale-[1.01] bg-gray-900/40">
+                <Image
+                  src={data.image}
+                  alt={data.title}
+                  fill
+                  sizes="(max-width:768px) 100vw, (max-width:1200px) 70vw, 60vw"
+                  className="object-cover"
+                  priority
+                />
+              </div>
             </div>
           )}
-          <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed">
-            <p>{data.description}</p>
-            <h2>Section Heading</h2>
-            <p>
-              This is some additional content to demonstrate how paragraphs and headings will look with the futuristic styling. We can add more detail here about the blog post topic.
-            </p>
-            <blockquote>This is a blockquote with a subtle glow effect. It highlights important information or quotes within the blog content.</blockquote>
+          <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-700 prose-code:text-pink-400 prose-blockquote:border-l-purple-500">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {data.description}
+            </ReactMarkdown>
           </div>
         </div>
       </div>
